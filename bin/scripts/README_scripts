@@ -1,0 +1,55 @@
+trestles_visual.ipynb is a Jupyter Notebook developed in Python 3.  It has dependencies on FFmpeg and FFprobe.  
+
+It will display a tiled visualization of low-level data extracted by the Trestles executable: ldecod.exe. 
+
+The final video visualization will be embedded in the bottom of the notebook if it has run successfully. 
+
+The user has control over the 3 input parameters in the first cell of the notebook.  
+
+It requires the tile_gen_functions.py script to be in the same directory when the notebook is run.
+
+
+Single Video Data Extraction USAGE:
+
+"extract_data.py -p <full_path_to_input_file> -o <path_to_output_files> -e <path_to_ldecod.exe_file> -f <path_to_decoder.cfg_file> -q <quantization flag: 0/1> -c <chroma-channel flag: 0/1> -i <i-frames only flag: 0/1 > -d <details flag: 0/1> -m <motion vector flag: 0/1>"
+
+The default values for the 5 flags are:  -q 1 -c 1 -i 0 -d 1 -m 1
+
+WARNING: IF NO OUTPUT DIRECTORY IS SET, BY DEFAULT OUTPUT FILES WILL BE CREATED IN THE DIRECTORY THE SCRIPT IS CALLED FROM
+
+The user must input the path to the video file, e.g.  /path/to/video/file.mp4.
+
+There is a dependency on ffmpeg.  It must be set in your path to be called from the directory the script is within.
+
+The script is set up to call the decoder executable and the default config file from the JM/bin/ subdirectory (assuming the extract_data.py is called from the /scripts/ subdirectory).  You can also use the command line arguments -e and -f to provide the paths to these files if in a different location than JM/bin/.
+
+
+**********************************************************************************************************************************************
+
+
+
+Batch Data Extraction USASE:
+
+There is a dependency on ffmpeg.  It must be set in your path to be called from the directory the script is within.
+
+
+WARNING: This script will create 7 sub-directories and write files within the directory it is called from unless the user provides a -o <path_to_output_files> input argument.  Otherwise, the following sub-directories will be created in the user provided output directory:
+
+"coefficient_files"
+"264_files"
+"mb_data"
+"mb_info"
+"chroma_b"
+"chroma_r"
+"motion_vec_data"
+
+"batch_extract_data.py -p <full_path_to_input_directory> -o <path_to_output_directory> -e <path_to_ldecod.exe_file> -f <path_to_decoder.cfg_file> -q <quantization flag: 0/1> -c <chroma-channel flag: 0/1> -i <i-frames only flag: 0/1 > -d <details flag: 0/1> -m <motion vector flag: 0/1>"
+
+The default values for the 5 flags are:  -q 1 -c 1 -i 0 -d 1 -m 1
+
+The user must input the path to the video files, e.g. /path/to/videos/
+
+The output files will be stored in the respective sub-directories generated from the script (one per each video).  
+
+The script is set up to call the decoder executable and the default config file from the JM/bin/ subdirectory (assuming the batch_extract_data.py is called from the /scripts/ subdirectory).  You can also use the command line arguments -e and -f to provide the paths to these files if in a different location than JM/bin/.
+
