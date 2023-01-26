@@ -25,45 +25,45 @@ The current setting for extracting Integer Transform (i.e. DCT) coefficients fro
 
 
  - `DCT_quant` specifies whether or not the user wants the coefficients to be quantized or dequantized.  During encoding, coefficients are quantized using a QP parameter.  During decoding, the coefficients are mapped back to the original scale using a "dequantization" step.  By default, this variable is set to 1, indicating this dequantizing step will be ignored when outputting the coefficients.  If you set it to 0, the coefficients will be dequantized and will typically be at least a few orders of magnitude larger than when `DCT_quant` = 1.
- - Chroma allows the user to output the coefficients corresponding to the Blue and Red Chroma channels (into files `CoefFile_b` and `CoefFile_r` respectively).
- - If the user only wants information for I frames (key-frames), then set IFrames to 1, meaning only I and IDR frames will be considered when extracting the Integer coefficients of the residuals.
- - Details is set to 1 by default, thus detailed information will be provided for each coefficient.  It has the form:
- -- Global Frame Number (this is the displayed order)
+ - `Chroma` allows the user to output the coefficients corresponding to the Blue and Red Chroma channels (into files `CoefFile_b` and `CoefFile_r` respectively).
+ - If the user only wants information for I frames (key-frames), then set `IFrames` to 1, indicating that only I and IDR frames should be considered when extracting the integer coefficients of the residuals.
+ - `Details` is set to 1 by default, thus detailed information will be provided for each coefficient.  It has the form:
+ -- Global Frame Number (this is according to displayed order)
  -- Corresponding Macroblock indices: (X,Y)
  -- Corresponding offset indices (X,Y) (0-15 valued)
  -- Integer Transform Coefficient (int value)
  
- If the user rather just have a quick dump of a "bag of coefficients" for exploratory analysis of the distributions, feel free to change Details = 0 and the output file will only be the non-zero coefficients.
+ If the user would rather just have a quick dump of a "bag of coefficients" for exploratory analysis of the distributions, feel free to change Details = 0 and the output file will only include the non-zero coefficients.
  
 
-There are 3 lines in the decoder configuration file to specify the file names you would like for the output for each respective channel:
+There are 3 lines in the decoder configuration file to specify the file names preferred for the output for each respective channel:
 
-`CoefFile              = "luma_coef.csv"    # Output file for DCT coefficients   (Luma channel)`
-`CoefFile_b              = "chr_b_coef.csv"    # Output file for DCT coefficients (Chroma B channel)`
-`CoefFile_r              = "chr_r_coef.csv"    # Output file for DCT coefficients (Chroma R channel)`
+`CoefFile              = "luma_coef.csv"     # Output file for DCT coefficients (Luma channel)`
+`CoefFile_b            = "chr_b_coef.csv"    # Output file for DCT coefficients (Chroma B channel)`
+`CoefFile_r            = "chr_r_coef.csv"    # Output file for DCT coefficients (Chroma R channel)`
 
 
 ### 4.2.2  Motion Vectors and corresponding residuals ##
 
-Currently a basic utility is added to allow the user to extract motion vectors and their respective residuals during the decoding process. If the `MV_flag` is set to 1 in the configuration file, data will be output to the `MV_file` set there in the following comma separated format:
+Currently a very basic utility is provided to extract motion vectors and their respective residuals during the decoding process. If the `MV_flag` is set to 1 in the configuration file, data will be output to the `MV_file` set there in the following comma separated format:
 
 `display order frame number, macroblock type, block x index, block y index, sub-block x index, sub-block y index, motion vector x, motion vector y, motion vector residual x, motion vector residual y`
 
-Some comments on these output:
+Some comments on these output fields:
 
- 1. The decoder does not necessarily decode in display order, so the first field is not always in the order as you look at the output, (e.g. frame 7 may be decoded before frame 4).
- 2. The Macroblock type corresponds to how it is partitioned.  I have encountered theses codes correspond to the following partitions: (1: 16x16 (full MB), 2: (two 16x8), 3: (two 8x16), 8: (four 8x8)).  If the macroblock is partitioned into four 8x8 partitions, it can (but not necessarily) have further macroblock partitioning (sub-macroblock partitions).  It is noticeable that the block x and block y indices are 1/4 that of the pixel resolution and this is consistent with the Luma MVs being 1/4 the resolution of the video (Chapter 6 of Iain Richardson's H.264: Advanced Compression Standard has detailed discussion about MVs).
+ 1. The decoder does not necessarily decode in display order, so the first field is not always in the order as you view the rendered output, (e.g. frame 7 may be decoded before frame 4).
+ 2. The Macroblock type corresponds to how it is partitioned.  These codes correspond to the following partitions: (1: 16x16 (full MB), 2: (two 16x8), 3: (two 8x16), 8: (four 8x8)).  If the macroblock is partitioned into four 8x8 partitions, it can (but not necessarily) have further macroblock partitioning (sub-macroblock partitions).  It is noticeable that the block x and block y indices are 1/4 that of the pixel resolution and this is consistent with the Luma MVs being 1/4 the resolution of the video (Chapter 6 of [Iain Richardson's H.264: Advanced Compression Standard](https://www.wiley.com/en-us/The+H+264+Advanced+Video+Compression+Standard,+2nd+Edition-p-9780470516928) has detailed discussion about MVs).
  3. The sub-block indices correspond to the location within each respective macroblock.  Much consideration should be placed on these values in relation to the Macroblock type in field 2 (discussed above).  For example if the MB type is 1, the sub block indices will be 0,0.  If the MB type is 3, the sub block indices will be 0,0 for the first MV pair and 8,0 for the second MV pair (the second of the two 8x16), etc....
- 4. The sub macroblock structure for 8x8 MB partitions can be inferred from the combination of this output, if more explicit pattern information is desired it is recommended the user looks at function `read_P8x8_macroblock` within `/ldecod/src/mb_read.c`.
+ 4. The sub macroblock structure for 8x8 MB partitions can be inferred from the combination of this output, if more explicit pattern information is desired it is recommended the user look at function `read_P8x8_macroblock` within `/ldecod/src/mb_read.c`.
 
 The remaining four fields include the MV information: one (x,y) pair for vectors and a corresponding pair for the residuals.
 
-The extraction of this information is in a preliminary state and there is more that could be done such as extracting reference frame(s).
+The extraction of this information is in a preliminary state and there is more that could be done, such as extracting reference frame(s).
 
 ### 4.2.3 Macroblock Data Extraction  ######
 
-There are two new output options included in the /bin/decoder.cfg file:  VPF_data and MB_data.  VPF_data outputs three integer values per frame in decode order in a comma separated format: The number of: I Macroblocks, S Macroblocks, P Macroblocks, Frame Number.  VPF stands for Variation of Prediction Footprint and is a forensic technique used to detect if multiple compression has occurred.  This data file can be used as input into a VPF algorithm (i.e. notebook/python script).  This values are simply a summary of the entire frame.  The value of each line should sum to the same value (the total number of MB per frame = Resolution/16^2).
-The MB_data file output option includes more specific information including spatial location, QP delta (quantization parameter change), and display frame number.  The MB_data is also in a comma separated format with the following output:  MB Type, MB QP Delta, X Index, Y Index, Frame Number.  There is a slight redundancy as the Motion Vector file, if used, will provide Macroblock Types, but only for the subset of Frames/Blocks (those containing motion vectors).  The integer value of parameter 'MB Type' indicates the following block type:
+There are two new output options included in the /bin/decoder.cfg file:  VPF_data and MB_data.  VPF_data outputs three integer values per frame in decode order in a comma separated format: The number of: I Macroblocks, S Macroblocks, P Macroblocks, Frame Number.  VPF stands for Variation of Prediction Footprint and is a forensic technique used to detect if multiple compression has occurred.  This data file may be used as input into a VPF algorithm (i.e. notebook/python script).  These values are simply a summary of the entire frame, the value of each line should sum to the same value (the total number of MB per frame = Resolution/16^2).
+The `MB_data` file output option includes more specific information including spatial location, QP delta (quantization parameter change), and display frame number.  The `MB_data` is also in a comma separated format with the following output:  MB Type, MB QP Delta, X Index, Y Index, Frame Number.  There is a slight redundancy as the Motion Vector file, if used, which will provide Macroblock Types, but only for the subset of Frames/Blocks (those containing motion vectors).  The integer value of parameter 'MB Type' indicates the following block type:
 
 Skip  MB    			0
 P MB  16x16  			1
@@ -85,7 +85,7 @@ MAXMODE    			15
 ---
 ### Example Python Scripts ###
 
-Please see the newer README_scripts in the /bin/scripts sub-directory for information on data extraction and jupyter notebook example.
+Please see the newer README_scripts in the /bin/scripts sub-directory for information on data extraction and a jupyter notebook example.
 
 <blockquote>
 <table>
