@@ -5,7 +5,7 @@
  - Coefficients:  These are the coefficients computed by the encoder after subtracting predicted 16x16 macroblocks from actual (raw pixel) macroblocks and computing the H.264 integer transform (a close approximation to the DCT), typically on 4x4 sub-blocks of the residual information.
  - Motion Vectors:  These are the standard H.264 motion vectors (also available via ffmpeg), but in addition to that we return the motion vector difference, which is the residual computed by the encoder after subtracting the predicted motion vector from the actual motion vector.  Only the motion vector difference is actually encoded in the bitstream.
 
-Trestles is built on the ITU-T Standards Committee Reference Decoder known as JM Software (version JM 19.0).  This is not the most efficient decoder around, but it has reasonably accessible source code.
+Trestles is built on the ITU-T Standards Committee Reference Decoder known as JM Software (version JM 19.0) freely available [here](https://iphome.hhi.de/suehring/tml/).  This is not the most efficient decoder around, but it has reasonably accessible source code.
 
 The residual data element outputs are controlled by the ldecod configuration file, which is described in the JM `Readme.txt`.  Specifically, we added sections 4.2.1 and 4.2.2 to that Readme, and reproduce them here:
 
