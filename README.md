@@ -87,17 +87,7 @@ MAXMODE    			15
 
 Please see the newer README_scripts in the /bin/scripts sub-directory for information on data extraction and a jupyter notebook example.
 
-<blockquote>
-<table>
-    <tr>
-        <td><strong>Important Caveats:</strong></td>
-    </tr>
-    <tr>
-            <p><em>FFMPEG software is required in a few of the calls made by the scripts. This is imperative for converting certain files to a compatible format with the JM software.</em></p>
-        </td>
-    </tr>
-</table>
-</blockquote>
+:warning: **Important Caveats:** FMPEG software is required in a few of the calls made by the scripts. This utility provides necessary stream extraction/conversion for certain file types into a JM software-compatible form.
 
 ---
 
