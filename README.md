@@ -93,6 +93,7 @@ Please see the newer README_scripts in the /bin/scripts sub-directory for inform
 
 ### Release ##
 
-LLNL-CODE-844142
+DOI: 10.11578/dc.20230207.3
 
+LLNL-CODE-844142
 
